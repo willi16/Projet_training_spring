@@ -1,12 +1,13 @@
 package com.odda.recouvrement.mappers;
 
-import java.util.UUID;
+import org.springframework.stereotype.Component;
 
 import com.odda.recouvrement.dto.requests.TypeFraisRequest;
 import com.odda.recouvrement.dto.responses.TypeFraisResponse;
 import com.odda.recouvrement.entities.Classe;
 import com.odda.recouvrement.entities.TypeFrais;
 
+@Component 
 public class TypeFraisMapper {
 
     public TypeFrais toEntity(TypeFraisRequest typeReq , Classe classe){
