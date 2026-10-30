@@ -18,6 +18,8 @@ import com.odda.recouvrement.repositories.ApprenantRepository;
 import com.odda.recouvrement.repositories.ClasseRepository;
 import com.odda.recouvrement.repositories.ParentRepository;
 import com.odda.recouvrement.services.ApprenantService;
+import com.odda.recouvrement.services.EcheancierService;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -28,6 +30,7 @@ public class ApprenantServiceImpl implements ApprenantService {
     private final ParentRepository parentRepository;
     private final ClasseRepository classeRepository;
     private final ApprenantMapper apprenantMapper;
+    private final EcheancierService echeancierService;
 
     @Override
     @Transactional
@@ -56,7 +59,7 @@ public class ApprenantServiceImpl implements ApprenantService {
 
         Apprenant saved = apprenantRepository.save(apprenant);
 
-        // TODO: Appel futur à echeancierGeneratorService.generer(saved);
+        echeancierService.genererPourApprenant(saved);
 
         return apprenantMapper.toResponse(saved);
     }
