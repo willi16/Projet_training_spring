@@ -5,6 +5,7 @@ public enum StatutEcheance {
     EN_COURS,
     EN_RETARD,
     PAYE,
+    PARTIELLEMENT_PAYE,
     REPORTE,
     ANNULE
 }

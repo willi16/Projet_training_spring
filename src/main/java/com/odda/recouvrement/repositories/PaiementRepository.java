@@ -1,6 +1,7 @@
 package com.odda.recouvrement.repositories;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -13,7 +14,9 @@ import java.util.List;
 
 public interface PaiementRepository extends JpaRepository<Paiement, Long> {
 
-    Optional<Paiement> findByNumeroRecu(String numeroRecu);
     List<Paiement> findByDatePaiement(LocalDate datePaiement);
+    Optional<Paiement> findByTrackingId(UUID trackingId);
+    List<Paiement> findByApprenant_TrackingIdOrderByDatePaiementDesc(UUID apprenantTrackingId);
+    boolean existsByNumeroRecu(String numeroRecu);
     
 }
