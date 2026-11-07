@@ -6,8 +6,8 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.5</version> <!-- Version stable et réelle de Spring Boot -->
-		<relativePath/> 
+		<version>3.2.5</version>
+		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	
 	<groupId>com.odda</groupId>
@@ -21,13 +21,19 @@
 	</properties>
 	
 	<dependencies>
-		
+		<!-- 1. Web & API REST -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		
-		<!-- JPA & Base de données -->
+		<!-- 2. Sécurité (JWT, PasswordEncoder, Rôles) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		
+		<!-- 3. Base de données & JPA -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -38,22 +44,55 @@
 			<scope>runtime</scope>
 		</dependency>
 		
-		<!-- Validation des DTO -->
+		<!-- 4. JWT (JSON Web Tokens) -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.12.5</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.12.5</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId> <!-- Nécessaire pour parser le JSON dans le JWT -->
+			<version>0.12.5</version>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<!-- 5. Validation des DTO (@NotBlank, @NotNull, etc.) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 		
-		<!-- Lombok -->
+		<!-- 6. Outils de développement (Rechargement à chaud) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		
+		<!-- 7. Lombok (Réduction du code boilerplate) -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
 		
+		<!-- 8. Tests -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

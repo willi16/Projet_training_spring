@@ -20,7 +20,6 @@ public class PaiementMapper {
         }
 
         return Paiement.builder()
-                .numeroRecu(paiementReq.numeroRecu())
                 .montantTotal(paiementReq.montantTotal())
                 .moyen(paiementReq.moyen())
                 .refTransaction(paiementReq.refTransaction())
