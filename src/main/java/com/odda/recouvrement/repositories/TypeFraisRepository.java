@@ -19,7 +19,7 @@ public interface TypeFraisRepository extends JpaRepository<TypeFrais, Long>{
     
     List<TypeFrais> findFraisByClasseId(Long classeId);
 
-    @Query ("SELECT t FROM TypeFrais t WHERE t.actif = true AND (t.classe IS NULL OR t.classe.id = :classeId )")
+    @Query ("SELECT t FROM TypeFrais t WHERE  t.classe IS NULL OR t.classe.id = :classeId ")
     List<TypeFrais> findApplicableFrais(@Param ("classeId") Long classeId);
 
     boolean existsByCode(String code);

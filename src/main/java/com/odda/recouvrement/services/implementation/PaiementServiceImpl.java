@@ -51,11 +51,12 @@ public class PaiementServiceImpl implements PaiementService {
         }
 
 
+        // Générer automatiquement le numéro de reçu
         String numeroRecu = "REC-" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + 
                             "-" + UUID.randomUUID().toString().substring(0, 4).toUpperCase();
 
 
-        // Récupérer les échéances NON PAYÉES, triées par date (FIFO)
+        // Récupérer les échéances NON PAYÉES, triées par date
         List<Echeancier> echeanciers = echeancierRepository.findByApprenantTrackingId(paiementReq.apprenantTrackingId())
                 .stream()
                 .filter(e -> e.getStatut() != StatutEcheance.PAYE && e.getStatut() != StatutEcheance.ANNULE)
@@ -87,14 +88,16 @@ public class PaiementServiceImpl implements PaiementService {
         // Sauvegarder les échéances modifiées
         echeancierRepository.saveAll(echeanciers);
 
-        // Enregistrer le paiement
-        Paiement paiement = paiementRepository.save(paiementMapper.toEntity(paiementReq, apprenant, caissier));
+        // Créer et Enregistrer le paiement
+        Paiement paiement = paiementMapper.toEntity(paiementReq, apprenant, caissier);
+        paiement.setNumeroRecu(numeroRecu); 
+        Paiement savedPaiement = paiementRepository.save(paiement);
 
         // Calcul du reliquat
         BigDecimal reliquat = paiementReq.montantTotal().subtract(totalImpute);
         
 
-        return paiementMapper.toResponse(paiement, totalImpute, reliquat);
+        return paiementMapper.toResponse(savedPaiement, totalImpute, reliquat);
     }
 
     @Override
