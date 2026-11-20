@@ -1,0 +1,61 @@
+<div class="page-header">
+  <h1>Gestion des Apprenants</h1>
+  <a routerLink="/apprenants/form" class="btn-primary">+ Nouvel Apprenant</a>
+</div>
+
+<div class="card">
+  @if (isLoading) {
+  <div class="loader">Chargement en cours...</div>
+  } @else if (errorMessage) {
+  <div class="error-box"> {{ errorMessage }}</div>
+  } @else if (apprenants.length === 0) {
+  <div class="empty-state">Aucun apprenant trouvé.</div>
+  } @else {
+  <table class="data-table">
+    <thead>
+
+      <tr>
+        <th>Matricule</th>
+        <th>Nom & Prénom</th>
+        <th>Date de naissance</th>
+        <th>Sexe</th>
+        <th>Classe</th>
+        <th>Parent / Tuteur</th>
+        <th>Statut</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (a of apprenants; track a.trackingId) {
+      <tr>
+        <td><strong>{{ a.matricule }}</strong></td>
+        <td>{{ a.nom }} {{ a.prenom }}</td>
+        <td>{{ a.dateNaissance | date:'dd/MM/yyyy' }}</td>
+        <td>{{ a.sexe === 'M' ? 'Masculin' : 'Féminin' }}</td>
+        <td><span class="badge">{{ a.classeLibelle || 'Non assigné' }}</span></td>
+
+        <!--  COLONNE PARENT AVEC LE FORMAT DEMANDÉ -->
+        <td>
+          @if (a.parent) {
+          {{ a.parent.nom }} {{ a.parent.prenom }} ({{ a.parent.contact }})
+          } @else {
+          <span style="color: var(--text-secondary); font-style: italic;">Non assigné</span>
+          }
+        </td>
+
+        <td>
+          <span class="status" [class.active]="a.statutPaiement === 'A_JOUR'">
+            {{ a.statutPaiement === 'A_JOUR' ? 'À jour' : 'En retard' }}
+          </span>
+        </td>
+
+        <td class="actions">
+          <a [routerLink]="['/apprenants/form', a.trackingId]" class="btn-icon edit" title="Modifier">✏️</a>
+          <button (click)="deleteApprenant(a.trackingId!)" class="btn-icon delete" title="Supprimer">🗑️</button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  }
+</div>

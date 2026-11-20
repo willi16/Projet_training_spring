@@ -1,6 +1,7 @@
 package com.odda.recouvrement.dto.requests;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import com.odda.recouvrement.enums.TypeFraisCode;
 
@@ -27,6 +28,6 @@ public record TypeFraisRequest(
 
     String cible,
 
-    Long classeId 
+    UUID classeTrackingId 
 
 ){}

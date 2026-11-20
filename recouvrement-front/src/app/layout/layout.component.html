@@ -1,0 +1,61 @@
+<div class="app-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo">Recouvrement</div>
+        <nav class="nav-links">
+            <a routerLink="/dashboard" routerLinkActive="active">Tableau de bord</a>
+            <a routerLink="/personnels" routerLinkActive="active">Personnels</a>
+            <a routerLink="/parametrage/classes" routerLinkActive="active">Paramétrage</a>
+            <a routerLink="/apprenants" routerLinkActive="active">Apprenants</a>
+            
+            <!-- ⬇️ MENU CAISSE AVEC SOUS-MENU DÉROULANT -->
+            <div class="menu-item" [class.open]="isCaisseMenuOpen">
+                <div class="menu-link" (click)="toggleCaisseMenu()">
+                    <span>Caisse</span>
+                    <span class="arrow" [class.rotated]="isCaisseMenuOpen">▼</span>
+                </div>
+                @if (isCaisseMenuOpen) {
+                    <div class="submenu">
+                        <a routerLink="/caisse/encaisser" routerLinkActive="active" class="submenu-link">
+                            💵 Encaissement
+                        </a>
+                        <a routerLink="/caisse/journal" routerLinkActive="active" class="submenu-link">
+                            📜 Journal des paiements
+                        </a>
+                        <a routerLink="/caisse/retards" routerLinkActive="active" class="submenu-link">
+                            ⚠️ État des retards
+                        </a>
+                    </div>
+                }
+            </div>
+            
+            <a routerLink="/reporting" routerLinkActive="active">Reporting</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- NAVBAR -->
+        <header class="navbar">
+            <div class="navbar-left">
+                <h2>Gestion de Recouvrement Scolaire</h2>
+            </div>
+            <div class="navbar-right">
+                <!-- Dark Mode Toggle -->
+                <button class="icon-btn" (click)="themeService.toggleTheme()" title="Changer de thème">
+                    {{ themeService.isDark() ? '☀️' : '🌙' }}
+                </button>
+
+                <!-- User Info -->
+                <div class="user-info">
+                    <span class="user-name">{{ username }}</span>
+                    <button class="btn-logout" (click)="logout()">Déconnexion</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <router-outlet></router-outlet>
+        </div>
+    </main>
+</div>

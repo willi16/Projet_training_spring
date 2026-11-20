@@ -36,9 +36,9 @@ public class TypeFraisServiceImpl implements TypeFraisService {
             throw new IllegalArgumentException("Un type de frais avec le code [" + typeReq.code() + "] existe déjà.");
         }
 
-        Classe classe = typeReq.classeId() != null 
-            ? classeRepository.findById(typeReq.classeId())
-                .orElseThrow(() -> new IllegalArgumentException("Classe introuvable avec l'ID : " + typeReq.classeId()))
+        Classe classe = typeReq.classeTrackingId() != null 
+            ? classeRepository.findByTrackingId(typeReq.classeTrackingId())
+                .orElseThrow(() -> new IllegalArgumentException("Classe introuvable avec l'ID : " + typeReq.classeTrackingId()))
             : null;
 
         TypeFrais saved = typeRepository.save(typeMapper.toEntity(typeReq, classe));
@@ -71,7 +71,7 @@ public class TypeFraisServiceImpl implements TypeFraisService {
         TypeFrais existing = typeRepository.findByTrackingId(trackingId)
             .orElseThrow(() -> new IllegalArgumentException("Type de frais introuvable"));
 
-        Classe classe = typeReq.classeId() != null ? classeRepository.findById(typeReq.classeId())
+        Classe classe = typeReq.classeTrackingId() != null ? classeRepository.findByTrackingId(typeReq.classeTrackingId())
             .orElseThrow(() -> new IllegalArgumentException("Classe introuvable")) : null;
 
         typeMapper.updateEntity(typeReq, existing, classe);

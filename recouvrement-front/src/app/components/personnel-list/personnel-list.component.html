@@ -1,0 +1,48 @@
+<div class="page-header">
+  <h1>Gestion des Personnels</h1>
+  <a routerLink="/personnels/form" class="btn-primary">+ Nouveau Personnel</a>
+</div>
+
+<div class="card">
+  @if (isLoading) {
+    <div class="loader">Chargement en cours...</div>
+  } @else if (errorMessage) {
+    <div class="error-box"> {{ errorMessage }}</div>
+  } @else if (personnels.length === 0) {
+    <div class="empty-state">Aucun personnel trouvé.</div>
+  } @else {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Matricule</th>
+          <th>Nom & Prénom</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Rôle</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of personnels; track p.trackingId) {
+          <tr>
+            <td>{{ p.matricule }}</td>
+            <td>{{ p.nom }} {{ p.prenom }}</td>
+            <td>{{ p.username }}</td>
+            <td>{{ p.email }}</td>
+            <td><span class="badge">{{ p.role }}</span></td>
+            <td>
+              <span class="status" [class.active]="p.actif" [class.inactive]="!p.actif">
+                {{ p.actif ? 'Actif' : 'Inactif' }}
+              </span>
+            </td>
+            <td class="actions">
+              <a [routerLink]="['/personnels/form', p.trackingId]" class="btn-icon edit" title="Modifier">✏️</a>
+              <button (click)="deletePersonnel(p.trackingId!)" class="btn-icon delete" title="Supprimer">🗑️</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

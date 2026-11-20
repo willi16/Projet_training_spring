@@ -1,0 +1,220 @@
+/* Variables de couleurs (Light Mode par défaut) */
+:host {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --accent-color: #3b82f6;
+  --sidebar-bg: #1e293b;
+  --sidebar-text: #f1f5f9;
+  --border-color: #e2e8f0;
+}
+
+/* Dark Mode */
+:host-context(.dark-mode) {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --accent-color: #60a5fa;
+  --sidebar-bg: #020617;
+  --border-color: #334155;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 260px;
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+}
+
+.logo {
+  padding: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+}
+
+.nav-links a {
+  padding: 0.75rem 1.5rem;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  transition: background 0.2s;
+  opacity: 0.8;
+}
+
+.nav-links a:hover, .nav-links a.active {
+  background-color: rgba(255,255,255,0.1);
+  opacity: 1;
+  border-left: 4px solid var(--accent-color);
+}
+
+/* Main Content */
+.main-content {
+  margin-left: 260px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--bg-secondary);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.navbar h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.icon-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.icon-btn:hover {
+  background-color: var(--bg-primary);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.btn-logout {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.btn-logout:hover {
+  background-color: #dc2626;
+}
+
+/* Page Content */
+.page-content {
+  padding: 2rem;
+  flex: 1;
+}
+
+/* =========================================
+   ⬇️ AJOUT : MENU CAISSE & SOUS-MENU
+   (Utilise --sidebar-text pour rester lisible en tout mode)
+   ========================================= */
+
+.menu-item {
+  position: relative;
+}
+
+.menu-item .menu-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  opacity: 0.8;
+}
+
+.menu-item .menu-link:hover,
+.menu-item.open .menu-link {
+  background-color: rgba(255,255,255,0.1);
+  opacity: 1;
+  border-left: 4px solid var(--accent-color);
+}
+
+.menu-item .menu-link .arrow {
+  font-size: 0.7rem;
+  transition: transform 0.2s;
+}
+
+.menu-item .menu-link .arrow.rotated {
+  transform: rotate(180deg);
+}
+
+.submenu {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.25rem 0;
+}
+
+.submenu-link {
+  display: block;
+  padding: 0.6rem 1rem 0.6rem 2.5rem;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 0.9rem;
+  opacity: 0.75;
+  border-left: 4px solid transparent;
+  transition: all 0.2s;
+}
+
+.submenu-link:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.08);
+}
+
+.submenu-link.active {
+  opacity: 1;
+  color: #ffffff;
+  font-weight: 600;
+  background: rgba(59, 130, 246, 0.25);
+  border-left-color: var(--accent-color);
+}

@@ -1,0 +1,229 @@
+<div class="encaissement-page">
+  <!-- En-tête de page -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">💵 Encaissement</h1>
+      <p class="page-subtitle">Gérez les paiements des apprenants</p>
+    </div>
+    @if (apprenantTrackingId) {
+      <button class="btn-secondary" (click)="changerApprenant()">
+        <span>🔄</span> Changer d'apprenant
+      </button>
+    }
+  </div>
+
+  <!-- ÉCRAN 1 : RECHERCHE D'APPRENANT -->
+  @if (!apprenantTrackingId) {
+    <div class="card search-card">
+      <div class="search-header">
+        <h2 class="section-title">🔍 Rechercher un apprenant</h2>
+        <p class="section-description">
+          Tapez le nom, le prénom ou le matricule pour afficher les échéances
+        </p>
+      </div>
+      
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Ex: Williams ou APP-2026-0001..."
+            [(ngModel)]="recherche"
+            autofocus>
+        </div>
+
+        @if (recherche.trim()) {
+          <div class="results-container">
+            @if (apprenantsFiltres.length === 0) {
+              <div class="empty-results">
+                <span class="empty-icon">😕</span>
+                <p>Aucun apprenant trouvé pour "{{ recherche }}"</p>
+              </div>
+            } @else {
+              <div class="results-list">
+                @for (a of apprenantsFiltres; track a.trackingId) {
+                  <div class="result-item" (click)="selectionnerApprenant(a)">
+                    <div class="result-main">
+                      <div class="result-avatar">
+                        {{ a.nom.charAt(0) }}{{ a.prenom.charAt(0) }}
+                      </div>
+                      <div class="result-info">
+                        <h3 class="result-name">{{ a.nom }} {{ a.prenom }}</h3>
+                        <p class="result-matricule">{{ a.matricule }}</p>
+                      </div>
+                    </div>
+                    <div class="result-class">
+                      <span class="badge-class">{{ a.classeLibelle || 'Non assigné' }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- ÉCRAN 2 : ÉCHÉANCIER DE L'APPRENANT -->
+  @if (apprenantTrackingId) {
+    @if (isLoading) {
+      <div class="card loading-card">
+        <div class="spinner"></div>
+        <p>Chargement de l'échéancier...</p>
+      </div>
+    } @else if (echeanciers.length === 0) {
+      <div class="card empty-card">
+        <span class="empty-icon">📋</span>
+        <h3>Aucune échéance trouvée</h3>
+        <p>Cet apprenant n'a pas d'échéances enregistrées.</p>
+      </div>
+    } @else {
+      <div class="card table-card">
+        <div class="table-header">
+          <h2 class="section-title">📊 Échéancier de l'apprenant</h2>
+          <div class="table-stats">
+            <span class="stat-item">
+              <strong>{{ echeanciers.length }}</strong> échéances
+            </span>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Type de frais</th>
+                <th>Date d'échéance</th>
+                <th class="text-right">Montant prévu</th>
+                <th class="text-right">Montant payé</th>
+                <th class="text-right">Reste à payer</th>
+                <th class="text-center">Statut</th>
+                <th class="text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (e of echeanciers; track e.trackingId) {
+                <tr [class.row-paid]="e.statut === 'PAYE'">
+                  <td>
+                    <div class="frais-info">
+                      <strong>{{ e.libelleTypeFrais }}</strong>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="date-display">{{ e.dateEcheance | date:'dd/MM/yyyy' }}</span>
+                  </td>
+                  <td class="text-right">
+                    <span class="amount">{{ e.montantPrevu | number:'1.2-2' }} FCFA</span>
+                  </td>
+                  <td class="text-right">
+                    <span class="amount paid">{{ e.montantPaye | number:'1.2-2' }} FCFA</span>
+                  </td>
+                  <td class="text-right">
+                    <span class="amount remaining">{{ e.resteAPayer | number:'1.2-2' }} FCFA</span>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge-status" [ngClass]="'status-' + getStatutClass(e.statut)">
+                      {{ e.statut }}
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    @if (e.statut !== 'PAYE' && e.statut !== 'ANNULE') {
+                      <button class="btn-pay" (click)="ouvrirPaiement(e)" title="Encaisser ce paiement">
+                        💰 Payer
+                      </button>
+                    } @else {
+                      <span class="paid-indicator">✓ Payé</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  }
+
+  <!-- MODAL DE PAIEMENT -->
+  @if (showPaiementForm && echeanceSelectionnee) {
+    <div class="modal-overlay" (click)="annulerPaiement()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-section">
+            <h3>💰 Encaisser un paiement</h3>
+            <p class="modal-subtitle">{{ echeanceSelectionnee.libelleTypeFrais }}</p>
+          </div>
+          <button class="btn-close" (click)="annulerPaiement()" title="Fermer">✕</button>
+        </div>
+        
+        <form [formGroup]="form" (ngSubmit)="soumettrePaiement()">
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label class="form-label">Reste à payer</label>
+              <input 
+                type="text" 
+                [value]="echeanceSelectionnee.resteAPayer | number:'1.2-2'" 
+                readonly 
+                class="form-input input-readonly">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Montant à encaisser *</label>
+              <input 
+                type="number" 
+                formControlName="montantTotal" 
+                step="0.01" 
+                min="0.01"
+                class="form-input"
+                placeholder="0.00">
+              @if (form.get('montantTotal')?.touched && form.get('montantTotal')?.errors?.['required']) {
+                <span class="error-message">Montant obligatoire</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Moyen de paiement *</label>
+              <select formControlName="moyen" class="form-input">
+                <option value="" disabled>-- Sélectionnez --</option>
+                @for (m of moyensPaiement; track m) {
+                  <option [value]="m">{{ m }}</option>
+                }
+              </select>
+              @if (form.get('moyen')?.touched && form.get('moyen')?.errors?.['required']) {
+                <span class="error-message">Moyen de paiement obligatoire</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Date de paiement *</label>
+              <input 
+                type="date" 
+                formControlName="datePaiement"
+                class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Référence transaction</label>
+              <input 
+                type="text" 
+                formControlName="refTransaction" 
+                placeholder="Ex: ID Mobile Money"
+                class="form-input">
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" (click)="annulerPaiement()">
+              Annuler
+            </button>
+            <button type="submit" [disabled]="form.invalid" class="btn-submit">
+              ✅ Valider le paiement
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>
