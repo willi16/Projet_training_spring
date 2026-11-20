@@ -8,7 +8,7 @@
             <a routerLink="/parametrage/classes" routerLinkActive="active">Paramétrage</a>
             <a routerLink="/apprenants" routerLinkActive="active">Apprenants</a>
             
-            <!-- ⬇️ MENU CAISSE AVEC SOUS-MENU DÉROULANT -->
+            <!--  MENU CAISSE AVEC SOUS-MENU DÉROULANT -->
             <div class="menu-item" [class.open]="isCaisseMenuOpen">
                 <div class="menu-link" (click)="toggleCaisseMenu()">
                     <span>Caisse</span>
@@ -17,13 +17,13 @@
                 @if (isCaisseMenuOpen) {
                     <div class="submenu">
                         <a routerLink="/caisse/encaisser" routerLinkActive="active" class="submenu-link">
-                            💵 Encaissement
+                            Encaissement
                         </a>
                         <a routerLink="/caisse/journal" routerLinkActive="active" class="submenu-link">
-                            📜 Journal des paiements
+                            Journal des paiements
                         </a>
                         <a routerLink="/caisse/retards" routerLinkActive="active" class="submenu-link">
-                            ⚠️ État des retards
+                            État des retards
                         </a>
                     </div>
                 }

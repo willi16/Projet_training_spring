@@ -122,12 +122,12 @@ export class EncaissementComponent implements OnInit {
 
     this.paiementService.enregistrer(payload).subscribe({
       next: (res) => {
-        alert(`✅ Paiement enregistré avec succès !\nReçu N° : ${res.numeroRecu}`);
+        alert(` Paiement enregistré avec succès !\nReçu N° : ${res.numeroRecu}`);
         this.annulerPaiement();
         this.loadEcheanciers(); // Rafraîchir le tableau
       },
       error: (err) => {
-        alert(`❌ Erreur: ${err.error?.description || err.error?.message || 'Échec du paiement'}`);
+        alert(` Erreur: ${err.error?.description || err.error?.message || 'Échec du paiement'}`);
       }
     });
   }

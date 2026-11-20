@@ -2,12 +2,12 @@
   <!-- En-tête de page -->
   <div class="page-header">
     <div class="header-left">
-      <h1 class="page-title">💵 Encaissement</h1>
+      <h1 class="page-title"> Encaissement</h1>
       <p class="page-subtitle">Gérez les paiements des apprenants</p>
     </div>
     @if (apprenantTrackingId) {
       <button class="btn-secondary" (click)="changerApprenant()">
-        <span>🔄</span> Changer d'apprenant
+        <span></span> Changer d'apprenant
       </button>
     }
   </div>
@@ -75,14 +75,14 @@
       </div>
     } @else if (echeanciers.length === 0) {
       <div class="card empty-card">
-        <span class="empty-icon">📋</span>
+        <span class="empty-icon"></span>
         <h3>Aucune échéance trouvée</h3>
         <p>Cet apprenant n'a pas d'échéances enregistrées.</p>
       </div>
     } @else {
       <div class="card table-card">
         <div class="table-header">
-          <h2 class="section-title">📊 Échéancier de l'apprenant</h2>
+          <h2 class="section-title">Échéancier de l'apprenant</h2>
           <div class="table-stats">
             <span class="stat-item">
               <strong>{{ echeanciers.length }}</strong> échéances
