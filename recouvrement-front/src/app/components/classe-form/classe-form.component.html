@@ -1,0 +1,47 @@
+<div class="page-header">
+    <h1>{{ isEditMode ? 'Modifier la Classe' : 'Nouvelle Classe' }}</h1>
+    <a routerLink="/parametrage/classes" class="btn-secondary">← Retour</a>
+</div>
+
+<div class="form-card">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Libellé de la classe</label>
+                <input type="text" formControlName="libelle" placeholder="ex: Sixième A, Terminale D">
+                @if (form.get('libelle')?.touched && form.get('libelle')?.errors?.['required']) {
+                <small class="error">Libellé obligatoire</small>
+                }
+            </div>
+
+            <div class="form-group">
+                <label>Capacité totale (élèves)</label>
+                <input type="number" formControlName="capaciteTotal" placeholder="ex: 30" min="1">
+                @if (form.get('capaciteTotal')?.touched && form.get('capaciteTotal')?.errors?.['required']) {
+                <small class="error">Capacité obligatoire</small>
+                }
+            </div>
+
+            <div class="form-group">
+                <label>Niveau d'enseignement</label>
+                <select formControlName="niveauTrackingId">
+                    <option value="" disabled>-- Sélectionnez un niveau --</option>
+                    <!-- On track par trackingId (unique), mais la value envoyée est n.id (le nombre) -->
+                    @for (n of niveaux; track n.trackingId) {
+                    <option [value]="n.trackingId">{{ n.libelle }}</option>
+                    }
+                </select>
+                @if (form.get('niveauTrackingId')?.touched && form.get('niveauTrackingId')?.errors?.['required']) {
+                <small class="error">Niveau obligatoire</small>
+                }
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" routerLink="/parametrage/classes" class="btn-secondary">Annuler</button>
+            <button type="submit" [disabled]="form.invalid || isLoading" class="btn-primary">
+                {{ isLoading ? 'Enregistrement...' : (isEditMode ? 'Mettre à jour' : 'Créer') }}
+            </button>
+        </div>
+    </form>
+</div>

@@ -26,8 +26,8 @@ public class ClasseServiceImpl implements ClasseService {
     @Override
     @Transactional
     public ClasseResponse save(ClasseRequest classeReq) {
-        Niveau niveau = niveauRepository.findById(classeReq.niveauId())
-                .orElseThrow(() -> new IllegalArgumentException("Niveau introuvable avec l'ID : " + classeReq.niveauId()));
+        Niveau niveau = niveauRepository.findByTrackingId(classeReq.niveauTrackingId())
+                .orElseThrow(() -> new IllegalArgumentException("Niveau introuvable avec l'ID : " + classeReq.niveauTrackingId()));
         
         Classe saved = classeRepository.save(classeMapper.toEntity(classeReq, niveau));
         return classeMapper.toResponse(saved);
@@ -53,7 +53,7 @@ public class ClasseServiceImpl implements ClasseService {
         Classe classe = classeRepository.findByTrackingId(trackingId)
                 .orElseThrow(() -> new IllegalArgumentException("Classe introuvable avec l'ID : " + trackingId));
         
-        Niveau niveau = niveauRepository.findById(classeReq.niveauId())
+        Niveau niveau = niveauRepository.findByTrackingId(classeReq.niveauTrackingId())
                 .orElseThrow(() -> new IllegalArgumentException("Niveau introuvable"));
 
         classeMapper.updateEntity(classeReq, classe, niveau);

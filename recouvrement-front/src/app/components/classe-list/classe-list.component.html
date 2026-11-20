@@ -1,0 +1,40 @@
+<div class="page-header">
+  <h1>Gestion des Classes</h1>
+  <a routerLink="/parametrage/classes/form" class="btn-primary">+ Nouvelle Classe</a>
+</div>
+
+<div class="card">
+  @if (isLoading) {
+    <div class="loader">Chargement en cours...</div>
+  } @else if (errorMessage) {
+    <div class="error-box">{{ errorMessage }}</div>
+  } @else if (classes.length === 0) {
+    <div class="empty-state">Aucune classe trouvée. Créez la première !</div>
+  } @else {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Libellé</th>
+          <th>Capacité</th>
+          <th>Effectif</th>
+          <th>Niveau</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (c of classes; track c.trackingId) {
+          <tr>
+            <td><strong>{{ c.libelle }}</strong></td>
+            <td>{{ c.capaciteTotal }}</td>
+            <td>{{ c.effectif || 0 }}</td>
+            <td><span class="badge">{{ c.niveauLibelle }}</span></td>
+            <td class="actions">
+              <a [routerLink]="['/parametrage/classes/form', c.trackingId]" class="btn-icon edit" title="Modifier">✏️</a>
+              <button (click)="deleteClasse(c.trackingId!)" class="btn-icon delete" title="Supprimer">🗑️</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

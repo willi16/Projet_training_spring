@@ -1,0 +1,38 @@
+<div class="login-container">
+  <div class="login-card">
+    <h2>Connexion au Système</h2>
+    <p class="subtitle">Gestion de Recouvrement Scolaire</p>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <div class="form-group">
+        <label for="username">Nom d'utilisateur</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username"
+          [(ngModel)]="credentials.username" 
+          required 
+          placeholder="ex: admin"
+          class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password"
+          [(ngModel)]="credentials.password" 
+          required 
+          placeholder="ex: admin123"
+          class="form-control">
+      </div>
+
+      <button type="submit" [disabled]="isLoading || !loginForm.form.valid" class="btn-submit">
+        {{ isLoading ? 'Connexion en cours...' : 'Se connecter' }}
+      </button>
+
+      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,53 @@
+<div class="page-header">
+  <h1>📜 Journal des Paiements</h1>
+  <div class="header-actions">
+    <span class="total-badge">Total du jour : {{ totalDuJour | number:'1.2-2' }} FCFA</span>
+  </div>
+</div>
+
+<div class="card">
+  @if (isLoading) {
+    <div class="loader">Chargement de l'historique...</div>
+  } @else if (paiements.length === 0) {
+    <div class="empty-state">Aucun paiement enregistré pour le moment.</div>
+  } @else {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>N° Reçu</th>
+          <th>Apprenant (Matricule)</th>
+          <th>Montant</th>
+          <th>Moyen</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of paiements; track p.trackingId) {
+          <tr>
+            <td>{{ p.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td><strong>{{ p.numeroRecu }}</strong></td>
+            <td>{{ p.matriculeApprenant }}</td>
+            <td class="montant">{{ p.montantTotal | number:'1.2-2' }} FCFA</td>
+            <td>
+              <span class="badge moyen-{{ p.moyen | lowercase }}">
+                {{ p.moyen }}
+              </span>
+            </td>
+            <td>
+              <span class="badge statut-{{ p.statut | lowercase }}">
+                {{ p.statut }}
+              </span>
+            </td>
+            <td>
+              <button class="btn-icon" (click)="imprimerRecu(p)" title="Imprimer le reçu">
+                🖨️
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

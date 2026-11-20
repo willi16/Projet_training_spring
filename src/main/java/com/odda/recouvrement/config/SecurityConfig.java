@@ -1,6 +1,5 @@
 package com.odda.recouvrement.config;
 
-
 import com.odda.recouvrement.utils.AppConstant;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor 
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
@@ -29,26 +28,33 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                // Endpoints publics
-                .requestMatchers(AppConstant.API_BASE_URL + "auth/**", "/error", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-                
-                // Gestion du personnel
-                .requestMatchers(AppConstant.API_BASE_URL + "personnels/**").hasAnyRole("ADMIN", "DIRECTEUR")
-                
-                // Module financier & Reporting
-                .requestMatchers(AppConstant.API_BASE_URL + "paiements/**", AppConstant.API_BASE_URL + "reporting/**").hasAnyRole("ADMIN", "DIRECTEUR", "COMPTABLE")
-                
-                // Échéanciers
-                .requestMatchers(AppConstant.API_BASE_URL + "echeanciers/apprenant/**").hasAnyRole("ADMIN", "DIRECTEUR", "COMPTABLE", "PARENT")
-                
-                // Tout le reste nécessite une authentification
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-            .build();
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        // Endpoints publics
+                        .requestMatchers(AppConstant.API_BASE_URL + "auth/**", "/error", "/swagger-ui/**",
+                                "/v3/api-docs/**", "/swagger-ui.html")
+                        .permitAll()
+
+                        // Gestion du personnel
+                        .requestMatchers(AppConstant.API_BASE_URL + "personnels/**").hasAnyRole("ADMIN", "DIRECTEUR")
+
+                        // Module financier & Reporting
+                        .requestMatchers(AppConstant.API_BASE_URL + "paiements/**",
+                                AppConstant.API_BASE_URL + "reporting/**")
+                        .hasAnyRole("ADMIN", "DIRECTEUR", "COMPTABLE")
+
+                        // Échéanciers
+                        .requestMatchers(AppConstant.API_BASE_URL + "echeanciers/apprenant/**")
+                        .hasAnyRole("ADMIN", "DIRECTEUR", "COMPTABLE", "PARENT")
+
+                        // Autoriser l'accès en lecture aux niveaux pour remplir les listes déroulantes
+                        .requestMatchers(AppConstant.API_BASE_URL + "niveaux/**").permitAll()
+
+                        // Tout le reste nécessite une authentification
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
     @Bean
