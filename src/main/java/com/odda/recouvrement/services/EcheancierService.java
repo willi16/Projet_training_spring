@@ -1,6 +1,7 @@
 package com.odda.recouvrement.services;
 
 import com.odda.recouvrement.dto.responses.EcheancierResponse;
+import com.odda.recouvrement.dto.responses.RetardResponse;
 import com.odda.recouvrement.entities.Apprenant;
 
 import java.util.List;
@@ -13,4 +14,6 @@ public interface EcheancierService {
     
     // Tableau des échéances d'un apprenant
     List<EcheancierResponse> getEcheanciersByApprenant(UUID apprenantTrackingId);
+
+    List<RetardResponse> getAllRetards();
 }

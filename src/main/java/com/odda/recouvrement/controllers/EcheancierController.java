@@ -1,6 +1,7 @@
 package com.odda.recouvrement.controllers;
 
 import com.odda.recouvrement.dto.responses.EcheancierResponse;
+import com.odda.recouvrement.dto.responses.RetardResponse;
 import com.odda.recouvrement.entities.Apprenant;
 import com.odda.recouvrement.repositories.ApprenantRepository;
 import com.odda.recouvrement.services.EcheancierService;
@@ -20,9 +21,8 @@ import static com.odda.recouvrement.utils.AppConstant.API_BASE_URL;
 public class EcheancierController {
 
     private final EcheancierService echeancierService;
-    private final ApprenantRepository apprenantRepository; 
+    private final ApprenantRepository apprenantRepository;
 
-    
     @PostMapping("/generer/{apprenantTrackingId}")
     public ResponseEntity<BaseResponse<Void>> genererManuellement(@PathVariable UUID apprenantTrackingId) {
         // Récupérer l'apprenant actif
@@ -39,13 +39,21 @@ public class EcheancierController {
                 .build());
     }
 
-    
     @GetMapping("/apprenant/{trackingId}")
     public ResponseEntity<BaseResponse<List<EcheancierResponse>>> getByApprenant(@PathVariable UUID trackingId) {
         return ResponseEntity.ok(BaseResponse.<List<EcheancierResponse>>builder()
                 .data(echeancierService.getEcheanciersByApprenant(trackingId))
                 .statusCode(200)
                 .description("Liste des échéances récupérée.")
+                .build());
+    }
+
+    @GetMapping("/retards")
+    public ResponseEntity<BaseResponse<List<RetardResponse>>> getRetards() {
+        return ResponseEntity.ok(BaseResponse.<List<RetardResponse>>builder()
+                .data(echeancierService.getAllRetards())
+                .statusCode(200)
+                .description("Liste des retards récupérée.")
                 .build());
     }
 }

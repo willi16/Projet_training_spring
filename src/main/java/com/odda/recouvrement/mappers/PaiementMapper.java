@@ -9,6 +9,7 @@ import com.odda.recouvrement.dto.responses.PaiementResponse;
 import com.odda.recouvrement.entities.Apprenant;
 import com.odda.recouvrement.entities.Paiement;
 import com.odda.recouvrement.entities.Personnel;
+import com.odda.recouvrement.enums.StatutPaiement;
 
 @Component 
 public class PaiementMapper {
@@ -42,8 +43,8 @@ public class PaiementMapper {
             paiement.getMontantTotal(),
             paiement.getMoyen(),
             paiement.getDatePaiement(),
-            paiement.getStatut(),
-            paiement.getApprenant() != null ? paiement.getApprenant().getMatricule() : "Inconnu",
+            paiement.getStatut() != null ? paiement.getStatut() : StatutPaiement.VALIDE,
+            paiement.getApprenant() != null ? paiement.getApprenant().getMatricule() : "—",
             totalImpute,
             reliquat
         );

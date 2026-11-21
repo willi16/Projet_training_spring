@@ -24,9 +24,10 @@ import com.odda.recouvrement.repositories.PersonnelRepository;
 import com.odda.recouvrement.services.PaiementService;
 
 import lombok.RequiredArgsConstructor;
+import java.util.stream.Collectors.*;
 
 @Service
-@RequiredArgsConstructor  
+@RequiredArgsConstructor
 public class PaiementServiceImpl implements PaiementService {
 
     private final PaiementRepository paiementRepository;
@@ -36,7 +37,7 @@ public class PaiementServiceImpl implements PaiementService {
     private final PaiementMapper paiementMapper;
 
     @Override
-    @Transactional 
+    @Transactional
     public PaiementResponse enregistrerPaiement(PaiementRequest paiementReq) {
 
         // Récupérer l'apprenant
@@ -50,11 +51,9 @@ public class PaiementServiceImpl implements PaiementService {
                     .orElseThrow(() -> new IllegalArgumentException("Caissier introuvable."));
         }
 
-
         // Générer automatiquement le numéro de reçu
-        String numeroRecu = "REC-" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + 
-                            "-" + UUID.randomUUID().toString().substring(0, 4).toUpperCase();
-
+        String numeroRecu = "REC-" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) +
+                "-" + UUID.randomUUID().toString().substring(0, 4).toUpperCase();
 
         // Récupérer les échéances NON PAYÉES, triées par date
         List<Echeancier> echeanciers = echeancierRepository.findByApprenantTrackingId(paiementReq.apprenantTrackingId())
@@ -68,7 +67,8 @@ public class PaiementServiceImpl implements PaiementService {
 
         // Algorithme FIFO d'imputation
         for (Echeancier echeance : echeanciers) {
-            if (montantRestantAImputer.compareTo(BigDecimal.ZERO) <= 0) break;
+            if (montantRestantAImputer.compareTo(BigDecimal.ZERO) <= 0)
+                break;
 
             BigDecimal resteDû = echeance.getMontantPrevu().subtract(echeance.getMontantPaye());
             BigDecimal montantAffecte = resteDû.min(montantRestantAImputer);
@@ -90,14 +90,26 @@ public class PaiementServiceImpl implements PaiementService {
 
         // Créer et Enregistrer le paiement
         Paiement paiement = paiementMapper.toEntity(paiementReq, apprenant, caissier);
-        paiement.setNumeroRecu(numeroRecu); 
+        paiement.setNumeroRecu(numeroRecu);
         Paiement savedPaiement = paiementRepository.save(paiement);
 
         // Calcul du reliquat
         BigDecimal reliquat = paiementReq.montantTotal().subtract(totalImpute);
-        
 
         return paiementMapper.toResponse(savedPaiement, totalImpute, reliquat);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PaiementResponse> getAll() {
+        return paiementRepository.findAllWithApprenant().stream() // nouvelle méthode
+                .sorted((p1, p2) -> p2.getDatePaiement().compareTo(p1.getDatePaiement()))
+                .map(p -> {
+                    // On calcule totalImpute/reliquat proprement au lieu de ZERO si vous le pouvez,
+                    // sinon ZERO reste OK pour l'affichage du journal
+                    return paiementMapper.toResponse(p, BigDecimal.ZERO, BigDecimal.ZERO);
+                })
+                .toList();
     }
 
     @Override
@@ -109,5 +121,4 @@ public class PaiementServiceImpl implements PaiementService {
                 .toList();
     }
 
-    
 }

@@ -16,23 +16,24 @@ import java.util.Map;
 
 public interface PaiementRepository extends JpaRepository<Paiement, Long> {
 
-    List<Paiement> findByDatePaiement(LocalDate datePaiement);
+        List<Paiement> findByDatePaiement(LocalDate datePaiement);
 
-    Optional<Paiement> findByTrackingId(UUID trackingId);
+        @Query("SELECT p FROM Paiement p LEFT JOIN FETCH p.apprenant a LEFT JOIN FETCH a.classe")
+        List<Paiement> findAllWithApprenant();
 
-    List<Paiement> findByApprenant_TrackingIdOrderByDatePaiementDesc(UUID apprenantTrackingId);
+        Optional<Paiement> findByTrackingId(UUID trackingId);
 
-    boolean existsByNumeroRecu(String numeroRecu);
+        List<Paiement> findByApprenant_TrackingIdOrderByDatePaiementDesc(UUID apprenantTrackingId);
 
-    @Query("SELECT SUM(p.montantTotal) FROM Paiement p WHERE p.datePaiement = :date")
-    BigDecimal sumMontantByDate(@Param ("date") LocalDate date);
+        boolean existsByNumeroRecu(String numeroRecu);
 
-    @Query("SELECT p.caissier.matricule, SUM(p.montantTotal) FROM Paiement p " +
-            "WHERE p.caissier.trackingId = :id AND p.datePaiement BETWEEN :debut AND :fin GROUP BY p.caissier.matricule")
+        @Query("SELECT SUM(p.montantTotal) FROM Paiement p WHERE p.datePaiement = :date")
+        BigDecimal sumMontantByDate(@Param("date") LocalDate date);
 
-    Map<String, BigDecimal> sumMontantByCaissier(@Param("id") UUID id, @Param("debut") LocalDate debut,
-            @Param("fin") LocalDate fin);
+        @Query("SELECT p.caissier.matricule, SUM(p.montantTotal) FROM Paiement p " +
+                        "WHERE p.caissier.trackingId = :id AND p.datePaiement BETWEEN :debut AND :fin GROUP BY p.caissier.matricule")
 
-
+        Map<String, BigDecimal> sumMontantByCaissier(@Param("id") UUID id, @Param("debut") LocalDate debut,
+                        @Param("fin") LocalDate fin);
 
 }

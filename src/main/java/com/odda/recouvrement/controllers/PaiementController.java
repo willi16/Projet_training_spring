@@ -39,4 +39,13 @@ public class PaiementController {
                 .description("Historique des paiements récupéré.")
                 .build());
     }
+
+    @GetMapping
+    public ResponseEntity<BaseResponse<List<PaiementResponse>>> getAll() {
+        return ResponseEntity.ok(BaseResponse.<List<PaiementResponse>>builder()
+                .data(paiementService.getAll())
+                .statusCode(200)
+                .description("Historique global des paiements récupéré.")
+                .build());
+    }
 }

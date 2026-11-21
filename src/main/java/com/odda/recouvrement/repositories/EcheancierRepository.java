@@ -19,8 +19,17 @@ public interface EcheancierRepository extends JpaRepository<Echeancier, Long> {
 
 
     // Pour le Cron Job (Relance automatique)
-    @Query("SELECT e FROM Echeancier e WHERE e.statut != 'PAYE' AND e.statut != 'ANNULE' AND e.dateEcheance < :aujourdhui")
-    List<Echeancier> findAllEnRetard(@Param ("aujourdhui") LocalDate aujourdhui);
+    // @Query("SELECT e FROM Echeancier e WHERE e.statut != 'PAYE' AND e.statut != 'ANNULE' AND e.dateEcheance < :aujourdhui")
+    // List<Echeancier> findAllEnRetard(@Param ("aujourdhui") LocalDate aujourdhui);
+
+    @Query("""
+    SELECT e FROM Echeancier e
+    WHERE e.dateEcheance < CURRENT_DATE
+      AND e.statut NOT IN ('PAYE', 'ANNULE', 'REPORTE')
+      AND e.apprenant.actif = true
+        ORDER BY e.dateEcheance ASC
+    """)
+    List<Echeancier> findAllEnRetard();
 
     @Query("SELECT COALESCE(SUM(e.montantPrevu), 0) FROM Echeancier e WHERE e.statut = 'PAYE'")
     BigDecimal sumMontantPaye();

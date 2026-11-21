@@ -102,3 +102,21 @@ export interface PaiementResponse {
   totalImpute: number;
   reliquat: number;
 }
+
+
+export interface RetardResponse {
+  echeancierTrackingId: string;
+  apprenantTrackingId: string;
+  matriculeApprenant: string;
+  nomApprenant: string;
+  classeLibelle: string | null;
+  libelleTypeFrais: string;
+  dateEcheance: string;
+  montantPrevu: number;
+  montantPaye: number;
+  resteAPayer: number;
+  joursDeRetard: number;
+  statut: string;
+  parentNom: string | null;
+  parentContact: string | null;
+}
