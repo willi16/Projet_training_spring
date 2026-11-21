@@ -1,53 +1,143 @@
-<div class="page-header">
-  <h1>📜 Journal des Paiements</h1>
-  <div class="header-actions">
-    <span class="total-badge">Total du jour : {{ totalDuJour | number:'1.2-2' }} FCFA</span>
+<div class="journal-page">
+  <!-- En-tête -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">📜 Journal des Paiements</h1>
+      <p class="page-subtitle">Historique de toutes les transactions</p>
+    </div>
+    <button class="btn-secondary" (click)="chargerJournal()">
+      🔄 Actualiser
+    </button>
   </div>
-</div>
 
-<div class="card">
+  <!-- Statistiques -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">💰</div>
+      <div class="stat-info">
+        <h3>Total du jour</h3>
+        <p class="stat-value">{{ totalDuJour | number:'1.2-2' }} FCFA</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">📊</div>
+      <div class="stat-info">
+        <h3>Total général</h3>
+        <p class="stat-value">{{ totalGeneral | number:'1.2-2' }} FCFA</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">🧾</div>
+      <div class="stat-info">
+        <h3>Transactions</h3>
+        <p class="stat-value">{{ nombreTransactions }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="card filters-card">
+    <h3 class="section-title">🔍 Filtres</h3>
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label class="filter-label">Date</label>
+        <input type="date" [(ngModel)]="filtreDate" (ngModelChange)="appliquerFiltres()" class="filter-input">
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Moyen de paiement</label>
+        <select [(ngModel)]="filtreMoyen" (ngModelChange)="appliquerFiltres()" class="filter-input">
+          <option value="">Tous les moyens</option>
+          @for (m of moyensPaiement; track m) {
+            <option [value]="m">{{ m }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Matricule</label>
+        <input type="text" [(ngModel)]="filtreMatricule" (ngModelChange)="appliquerFiltres()" 
+               placeholder="Ex: APP-2026-0001" class="filter-input">
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">&nbsp;</label>
+        <button class="btn-reset" (click)="resetFiltres()">
+          🗑️ Réinitialiser
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau -->
   @if (isLoading) {
-    <div class="loader">Chargement de l'historique...</div>
-  } @else if (paiements.length === 0) {
-    <div class="empty-state">Aucun paiement enregistré pour le moment.</div>
+    <div class="card loading-card">
+      <div class="spinner"></div>
+      <p>Chargement de l'historique...</p>
+    </div>
+  } @else if (paiementsFiltres.length === 0) {
+    <div class="card empty-card">
+      <span class="empty-icon">📭</span>
+      <h3>Aucun paiement trouvé</h3>
+      <p>Modifiez vos filtres ou encaissez un nouveau paiement.</p>
+    </div>
   } @else {
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>N° Reçu</th>
-          <th>Apprenant (Matricule)</th>
-          <th>Montant</th>
-          <th>Moyen</th>
-          <th>Statut</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (p of paiements; track p.trackingId) {
-          <tr>
-            <td>{{ p.datePaiement | date:'dd/MM/yyyy HH:mm' }}</td>
-            <td><strong>{{ p.numeroRecu }}</strong></td>
-            <td>{{ p.matriculeApprenant }}</td>
-            <td class="montant">{{ p.montantTotal | number:'1.2-2' }} FCFA</td>
-            <td>
-              <span class="badge moyen-{{ p.moyen | lowercase }}">
-                {{ p.moyen }}
-              </span>
-            </td>
-            <td>
-              <span class="badge statut-{{ p.statut | lowercase }}">
-                {{ p.statut }}
-              </span>
-            </td>
-            <td>
-              <button class="btn-icon" (click)="imprimerRecu(p)" title="Imprimer le reçu">
-                🖨️
-              </button>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+    <div class="card table-card">
+      <div class="table-header">
+        <h2 class="section-title">📋 Liste des paiements</h2>
+        <span class="results-count">{{ paiementsFiltres.length }} résultat(s)</span>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>N° Reçu</th>
+              <th>Matricule Apprenant</th>
+              <th class="text-right">Montant</th>
+              <th>Moyen</th>
+              <th class="text-center">Statut</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of paiementsFiltres; track p.trackingId) {
+              <tr>
+                <td>
+                  <span class="date-display">{{ p.datePaiement | date:'dd/MM/yyyy' }}</span>
+                </td>
+                <td>
+                  <strong class="recu-number">{{ p.numeroRecu }}</strong>
+                </td>
+                <td>
+                  <span class="matricule">{{ p.matriculeApprenant }}</span>
+                </td>
+                <td class="text-right">
+                  <span class="amount">{{ p.montantTotal | number:'1.2-2' }} FCFA</span>
+                </td>
+                <td>
+                  <span class="badge-moyen" [ngClass]="getMoyenClass(p.moyen)">
+                    {{ p.moyen }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <span class="badge-statut" [ngClass]="getStatutClass(p.statut)">
+                    {{ p.statut }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <button class="btn-action" (click)="voirRecu(p)" title="Voir le reçu">
+                    📄
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
   }
 </div>

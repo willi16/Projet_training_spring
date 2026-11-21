@@ -37,19 +37,29 @@ public class SecurityConfig {
                         .permitAll()
 
                         // Gestion du personnel
-                        .requestMatchers(AppConstant.API_BASE_URL + "personnels/**").hasAnyRole("ADMIN", "DIRECTEUR")
+                        .requestMatchers(AppConstant.API_BASE_URL + "personnels/**").hasAnyAuthority("ADMIN", "ROLE_ADMIN", "DIRECTEUR", "ROLE_DIRECTEUR")
 
                         // Module financier & Reporting
-                        .requestMatchers(AppConstant.API_BASE_URL + "paiements/**",
-                                AppConstant.API_BASE_URL + "reporting/**")
-                        .hasAnyRole("ADMIN", "DIRECTEUR", "COMPTABLE")
+                        // .requestMatchers(AppConstant.API_BASE_URL + "paiements/**",
+                        //         AppConstant.API_BASE_URL + "reporting/**")
+                        // .hasAnyAuthority("ADMIN", "ROLE_ADMIN", "DIRECTEUR", "ROLE_DIRECTEUR", 
+                        //                  "COMPTABLE", "ROLE_COMPTABLE", "CAISSIER", "ROLE_CAISSIER")
+
+                        .requestMatchers(AppConstant.API_BASE_URL + "paiements/**").authenticated() // Juste être connecté suffit
 
                         // Échéanciers
                         .requestMatchers(AppConstant.API_BASE_URL + "echeanciers/apprenant/**")
-                        .hasAnyRole("ADMIN", "DIRECTEUR", "COMPTABLE", "PARENT")
+                        .hasAnyAuthority("ADMIN", "ROLE_ADMIN", "DIRECTEUR", "ROLE_DIRECTEUR", 
+                                         "COMPTABLE", "ROLE_COMPTABLE", "PARENT", "ROLE_PARENT", "CAISSIER", "ROLE_CAISSIER")
+
 
                         // Autoriser l'accès en lecture aux niveaux pour remplir les listes déroulantes
                         .requestMatchers(AppConstant.API_BASE_URL + "niveaux/**").permitAll()
+
+                        .requestMatchers(AppConstant.API_BASE_URL + "classes/**").permitAll()
+
+                        .requestMatchers(AppConstant.API_BASE_URL + "apprenants/**").authenticated() 
+
 
                         // Tout le reste nécessite une authentification
                         .anyRequest().authenticated())

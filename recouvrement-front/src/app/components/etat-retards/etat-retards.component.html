@@ -1,1 +1,125 @@
-<p>etat-retards works!</p>
+<div class="retards-page">
+  <!-- En-tête -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">⚠️ État des Retards</h1>
+      <p class="page-subtitle">Apprenants avec des échéances impayées à date</p>
+    </div>
+    <button class="btn-secondary" (click)="chargerRetards()">
+      🔄 Actualiser
+    </button>
+  </div>
+
+  @if (isLoading) {
+    <div class="card loading-card">
+      <div class="spinner"></div>
+      <p>Calcul des retards en cours...</p>
+    </div>
+  } @else {
+
+    <!-- Statistiques -->
+    <div class="stats-grid">
+      <div class="stat-card stat-danger">
+        <div class="stat-icon">💸</div>
+        <div class="stat-info">
+          <h3>Dette totale</h3>
+          <p class="stat-value">{{ totalDette | number:'1.2-2' }} FCFA</p>
+        </div>
+      </div>
+
+      <div class="stat-card stat-warning">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <h3>Apprenants concernés</h3>
+          <p class="stat-value">{{ nbApprenantsEnRetard }}</p>
+        </div>
+      </div>
+
+      <div class="stat-card stat-critique">
+        <div class="stat-icon">🚨</div>
+        <div class="stat-info">
+          <h3>Retards critiques (&gt;90j)</h3>
+          <p class="stat-value">{{ nbRetardsCritiques }}</p>
+        </div>
+      </div>
+
+      <div class="stat-card stat-important">
+        <div class="stat-icon">⏰</div>
+        <div class="stat-info">
+          <h3>Retards importants (30-90j)</h3>
+          <p class="stat-value">{{ nbRetardsImportants }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableau -->
+    @if (retards.length === 0) {
+      <div class="card success-card">
+        <span class="success-icon">✅</span>
+        <h3>Aucun retard détecté</h3>
+        <p>Tous les apprenants sont à jour dans leurs paiements. Excellent travail !</p>
+      </div>
+    } @else {
+      <div class="card table-card">
+        <div class="table-header">
+          <h2 class="section-title">📋 Détail des échéances en retard</h2>
+          <span class="results-count">{{ retards.length }} échéance(s) en retard</span>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Matricule</th>
+                <th>Apprenant</th>
+                <th>Classe</th>
+                <th>Type de frais</th>
+                <th>Échéance</th>
+                <th class="text-center">Retard</th>
+                <th class="text-right">Reste dû</th>
+                <th>Parent / Contact</th>
+                <th class="text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of retards; track r.echeancierTrackingId) {
+                <tr [class.row-critique]="r.joursDeRetard > 90">
+                  <td><strong class="matricule">{{ r.matriculeApprenant }}</strong></td>
+                  <td>{{ r.nomApprenant }}</td>
+                  <td><span class="badge-class">{{ r.classeLibelle || '—' }}</span></td>
+                  <td>{{ r.libelleTypeFrais }}</td>
+                  <td><span class="date-display">{{ r.dateEcheance | date:'dd/MM/yyyy' }}</span></td>
+                  <td class="text-center">
+                    <span class="badge-retard" [ngClass]="'retard-' + getNiveauRetard(r.joursDeRetard)">
+                      {{ r.joursDeRetard }} j
+                    </span>
+                  </td>
+                  <td class="text-right">
+                    <strong class="amount-due">{{ r.resteAPayer | number:'1.2-2' }} FCFA</strong>
+                  </td>
+                  <td>
+                    @if (r.parentNom) {
+                      <div class="parent-info">
+                        <span class="parent-name">{{ r.parentNom }}</span>
+                        <a class="parent-contact" (click)="appelerParent(r.parentContact)">
+                          📞 {{ r.parentContact }}
+                        </a>
+                      </div>
+                    } @else {
+                      <span class="text-muted">Non renseigné</span>
+                    }
+                  </td>
+                  <td class="text-center">
+                    <button class="btn-pay" (click)="allerEncaisser(r)" title="Encaisser">
+                      💰 Payer
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  }
+</div>

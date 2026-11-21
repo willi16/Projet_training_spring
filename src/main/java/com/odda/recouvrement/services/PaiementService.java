@@ -16,6 +16,8 @@ public interface PaiementService {
      */
     PaiementResponse enregistrerPaiement(PaiementRequest req);
     
+    List<PaiementResponse> getAll();
+
     /**
      * Récupère l'historique de tous les paiements effectués par un apprenant donné.
      * 
